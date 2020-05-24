@@ -1,24 +1,22 @@
-from tkinter import *
-from functools import partial
-from ConnectFour import *
+import tkinter as tk
+
+import okno_gry
+
+import gracz_komputerowy
 
 def main():
 
+    tk.window = tk.Tk()
+    tk.window.title("Cztery w rzędzie") #napis na oknie
 
+    game = okno_gry.ConnectFour(tk.window)
 
-    window = Tk()
-    window.title( "Cztery w rzędzie" ) #napis na oknie
+    #  game.loadData()
 
-    game = ConnectFour(window) 
+    game.load_geometry()
+    game.start_game()
 
-    game.loadData()
-    game.loadGeometry()
-    game.startGame()
-    
-
-   # game.test()
-   # game.test()
+    print(gracz_komputerowy.__doc__)
 
 if __name__ == "__main__":
     main()
-  
