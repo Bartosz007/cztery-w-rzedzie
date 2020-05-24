@@ -1,22 +1,25 @@
 """Plik przechowujący klasę odpowiadającą za mechanikę gry."""
 
-from gracz_komputerowy import gracz_komputerowy
+from gracz_komputerowy import GraczKomputerowy
 
 COLS = 7
 ROWS = 6
+MAX_HITS = 41
 
 
 class GameFunctions:
     """Klasę odpowiadająca za mechanikę gry."""
+
     def __init__(self, heigh, width, endgame, tpoles, tlevels, player, aiplayer, diff):
-        """Konstruktor ładujący podstawowe zmienne."""
+        """Konstruktor ładujący podstawowe zmienne.
+
+        Laduje zmienne używane w następnych metodach"""
         self.__heigh = heigh
         self.__width = width
         self.hits = 0
         self.__end_game = endgame
-        print("{}x{}".format(COLS, ROWS))
 
-        self.__tpoles = tpoles
+        self.tpoles = tpoles
         self.__tlevels = tlevels
         self.__player = player
         self.__ai_player = aiplayer
@@ -30,7 +33,9 @@ class GameFunctions:
         self.__f_stat = f_stat
 
     def draw(self):
-        """Metoda rysującą każdą klatkę gry."""
+        """Metoda rysującą każdą klatkę gry.
+
+        Czyści całe okno gry a nastęnie rysuje wszystko od nowa."""
         self.__canvas.delete("all")
 
         self.__canvas.create_rectangle(0, 0, self.__width, self.__heigh * 0.7, fill="#8A3500")
@@ -43,9 +48,9 @@ class GameFunctions:
         for i in range(ROWS):
             for j in range(COLS):
                 color = "white"
-                if self.__tpoles[i][j] == -1:
+                if self.tpoles[i][j] == -1:
                     color = "#FF2200"
-                elif self.__tpoles[i][j] == 1:
+                elif self.tpoles[i][j] == 1:
                     color = "#FF9B21"
 
                 self.__canvas.create_oval(width_hole * (1 + j) + rect_width * (1 + j),
@@ -55,14 +60,14 @@ class GameFunctions:
                                           fill=color, outline=color)
 
     def hit(self, col):
-        """Metoda odpowiedziala za sposó liczenia w zależności od typu drugiego gracza."""
+        """Metoda odpowiedziala za sposób liczenia w zależności od typu drugiego gracza."""
         if self.__ai_player:  # jeśli gramy z komputerem
             self.__aicalculate(col)
         else:
-            self.__calculate(col)
+            self.calculate(col)
 
     def change_player(self, player):
-        """Metoda odzpowiedzialna za zmianę gracz po każdym strzale."""
+        """Metoda odzpowiedzialna za zmianę gracza po każdym strzale."""
         self.__player = player
 
         if self.__ai_player:
@@ -82,11 +87,16 @@ class GameFunctions:
 
     def set_stat(self, text):
         """Metoda odpowiedzialna za zmianę komunikatu."""
-        self.__f_stat["text"] = text
+        try:
+            self.__f_stat["text"] = text
+        except TypeError:
+            print("Nie udało się uzyskać bloku 'text'")
 
-    def __calculate(self, col):
-        """Metoda odpoweidzialna za sprawdzanie wyników gry
-        i kolejność dwóch graczy rzeczywsistych."""
+    def calculate(self, col):
+        """Metoda odpowiedzialna za sprawdzanie wyników gry.
+
+        Dotyczy ona gdy oboma graczami są rzeczywiste osoby.
+        Zapewnia ona również odpowiednią kolejność strzałów i sprawdza stan gry."""
         #  print(self.__tlevels)
         row = self.__tlevels[col]
 
@@ -96,41 +106,50 @@ class GameFunctions:
 
         status = False
         if self.__player:  # gracz nr 1
-            self.__tpoles[row][col] = -1
+            self.tpoles[row][col] = -1
             self.set_stat("Tura gracza 2")  # jeśli gramy z graczem drugim
 
-            status = self.__check(row, col, -1)
+            status = self.check(row, col, -1)
             if status:
                 # funckja z kończeniem gry
                 self.set_stat("Wygrał gracz numer 1")
 
         else:
-            self.__tpoles[row][col] = 1  # gracz nr 2
+            self.tpoles[row][col] = 1  # gracz nr 2
 
             self.set_stat("Tura gracza 1")
-            status = self.__check(row, col, 1)
+            status = self.check(row, col, 1)
             if status:  # funckja z kończeniem gry
                 self.set_stat("Wygrał gracz numer 2")
 
-        self.draw()
+        try:
+            self.draw()
+        except:
+            print("Nie udało się uzyskać bloku canvas")
 
         if status:
-            print("wygra "+str(self.__player))
             if self.__player:
                 self.__end_game(1)
+                return 1
             else:
                 self.__end_game(2)
+                return 2
 
         self.hits = self.hits + 1
-        if self.hits > 41:
+        if self.hits > MAX_HITS:
             self.__end_game(4)
+            return 3
 
         self.__tlevels[col] = self.__tlevels[col] - 1
         self.__player = not self.__player
 
+        return 0
+
     def __aicalculate(self, col):
-        """Metoda odpoweidzialna za sprawdzanie wyników gry
-        i kolejność gracza rzeczywistego oraz komputerowego."""
+        """Metoda odpowiedzialna za sprawdzanie wyników gry.
+
+        Dotyczy ona gdy graczami są człowiek i komputer.
+        Zapewnia ona również odpowiednią kolejność strzałów i sprawdza stan gry."""
 
         row = self.__tlevels[col]
 
@@ -139,12 +158,11 @@ class GameFunctions:
             self.set_stat("Brak miejsca w tej kolumnie, strzel ponownie...")
             return
 
-        self.__tpoles[row][col] = -1
+        self.tpoles[row][col] = -1
 
-        status = self.__check(row, col, -1)
+        status = self.check(row, col, -1)
         if status:
             self.set_stat("Wygrał gracz numer 1")
-            print("wygrał gracz 1")
             # funckja z kończeniem gry
 
         self.__tlevels[col] = self.__tlevels[col] - 1
@@ -156,7 +174,7 @@ class GameFunctions:
             return
 
         self.hits = self.hits + 1
-        if self.hits > 41:
+        if self.hits > MAX_HITS:
             self.set_stat("Remis")
             self.__end_game(4)
             return
@@ -164,39 +182,37 @@ class GameFunctions:
         self.set_stat("Komputer myśli...")
 
         # ---------------sekcja komputera---------------------
+        computer = GraczKomputerowy(self.tpoles, self.__tlevels, self.__diff)
+        col2 = computer.make_move()
 
-        col2 = gracz_komputerowy(self.__tpoles, self.__tlevels, self.__diff)  # strzał komputera
         row2 = self.__tlevels[col2]
-        # row2,col2 = ai(self.__tpoles,self.__tlevels,self.__rows,self.__cols)
 
-        self.__tpoles[row2][col2] = 1
+        self.tpoles[row2][col2] = 1
 
-        status = self.__check(row2, col2, 1)
+        status = self.check(row2, col2, 1)
         if status:  # funckja z kończeniem gry
             self.set_stat("Wygrał komputer...")
-            print("wygrał komputer")
 
         self.__tlevels[col2] = self.__tlevels[col2] - 1
         self.draw()
 
         if status:
             self.__end_game(3)
-            print("komp wygrał")
             return
 
         self.hits = self.hits + 1
-        if self.hits > 41:
+        if self.hits > MAX_HITS:
             self.set_stat("Remis")
             self.__end_game(4)
             return
 
         self.set_stat("Tura gracza 1")
 
-    def __check(self, row, col, sign):
+    def check(self, row, col, sign):
         """Metoda sprawdzająca stan gry."""
         counter = 0
         for i in range(COLS):
-            if self.__tpoles[row][i] == sign:
+            if self.tpoles[row][i] == sign:
                 counter = counter + 1
                 if counter == 4:
                     return True
@@ -205,7 +221,7 @@ class GameFunctions:
 
         counter = 0
         for i in range(ROWS):
-            if self.__tpoles[i][col] == sign:
+            if self.tpoles[i][col] == sign:
                 counter = counter + 1
                 if counter == 4:
                     return True
@@ -222,7 +238,7 @@ class GameFunctions:
 
         counter = 0
         while brow < 6 and bcol < 7:
-            if self.__tpoles[brow][bcol] == sign:
+            if self.tpoles[brow][bcol] == sign:
                 counter = counter + 1
                 if counter == 4:
                     return True
@@ -241,7 +257,7 @@ class GameFunctions:
         counter = 0
         while brow < 6 and bcol >= 0:
 
-            if self.__tpoles[brow][bcol] == sign:
+            if self.tpoles[brow][bcol] == sign:
                 counter = counter + 1
                 #     print(counter,brow,bcol)
                 if counter == 4:

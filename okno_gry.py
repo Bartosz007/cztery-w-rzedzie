@@ -2,8 +2,8 @@
 
 import tkinter as tk
 
-from random import choice
 from functools import partial
+from random import choice
 from tkinter import messagebox
 
 from mechanika_gry import GameFunctions
@@ -16,14 +16,16 @@ WINDOW_SCALE_H = GLOBAL_SCALE * 0.85
 FONT = "Times New Roman"
 FONT_SIZE = 15
 COLOR = "#296380"
-
+SECOND_COLOR = "#D15304"
 
 class ConnectFour:
     """Klasa odpowiadająca za odpowiednią budowę okna gry oraz jego elementów."""
 
     def __init__(self, window):
-        """Konstruktor budujący okno gry o odpowiednim rozmiarze oraz tworzące zmienne
-        i tablice przechowujące podstawowe dane o grze"""
+        """Konstruktor budujący okno gry.
+
+         Buduje okno o odpowiednim rozmiarze oraz tworzący zmienne
+        i tablice przechowujące podstawowe dane o grze."""
 
         screen_heigh = window.winfo_screenheight()  # rozdzielczość ekranu
         screen_width = window.winfo_screenwidth()
@@ -50,7 +52,7 @@ class ConnectFour:
         # poziom trudnosci sztucznej inteligencji 0-7
         self.__diff = 0
         self.__game = GameFunctions(self.__window_heigh, self.__window_width,
-                                    self.__end_game, self.__tpoles, self.__tlevels,
+                                    self.end_game, self.__tpoles, self.__tlevels,
                                     self.__player, self.__ai_player, self.__diff)
         # warunek, że jeśli gramy z komputerem, to zawsze gracz zaczyna
         if self.__ai_player:
@@ -129,7 +131,7 @@ class ConnectFour:
             frame.pack_propagate(0)
             frame.pack(side=tk.LEFT)
             button = tk.Button(frame, text="{}".format(index + 1), padx=self.__window_width / 28,
-                               pady=self.__window_heigh / 80, bg="#D15304")
+                               pady=self.__window_heigh / 80, bg=SECOND_COLOR)
             button.config(command=partial(self.__bt_hit, index))
             button.pack(side=tk.BOTTOM)
 
@@ -146,12 +148,14 @@ class ConnectFour:
         grup = True
         self.__rbt_computer = tk.Radiobutton(f_player_menu, text="Komputer", variable=grup, value=1,
                                              font=(FONT, FONT_SIZE - 2), indicatoron=0,
-                                             bg="#D15304", command=lambda: self.change_player(True),
+                                             bg=SECOND_COLOR,
+                                             command=lambda: self.change_player(True),
                                              padx=25, pady=2)
         self.__rbt_computer.pack(side=tk.LEFT)
 
         self.__rbt_player = tk.Radiobutton(f_player_menu, text="Człowiek", variable=grup, value=2,
-                                           font=(FONT, FONT_SIZE - 2), indicatoron=0, bg="#D15304",
+                                           font=(FONT, FONT_SIZE - 2), indicatoron=0,
+                                           bg=SECOND_COLOR,
                                            command=lambda: self.change_player(False),
                                            padx=25, pady=2)
         self.__rbt_player.pack(side=tk.RIGHT)
@@ -174,7 +178,7 @@ class ConnectFour:
 
         # panel Reset
         bt_reset = tk.Button(f_reset_menu, text="Reset", padx=int(self.__window_width / 30),
-                             pady=self.__window_heigh, font=(FONT, FONT_SIZE + 5), bg="#D15304")
+                             pady=self.__window_heigh, font=(FONT, FONT_SIZE + 5), bg=SECOND_COLOR)
         bt_reset.config(command=self.__reset_game)
         bt_reset.pack()
 
@@ -193,7 +197,7 @@ class ConnectFour:
         print("władowano geometrie...")
 
     def start_game(self):
-        """Metoda rysująca pierwszą klatkę gry oraz uruchamiająca główną pętle gry."""
+        """Metoda uruchamiająca główną pętle gry."""
         print("otworzono okno gry...")
 
         self.__game.draw()
@@ -236,7 +240,10 @@ class ConnectFour:
         self.__game.change_diff(index)
 
     def __reset_game(self):
-        """Metoda odpowiedzialna za resetowanie stanu gry."""
+        """Metoda odpowiedzialna za resetowanie stanu gry.
+
+        Resetuje ona ustawienia gry oraz planszy,
+        dzięki czemu zamykanie okna nie jest wymagane."""
         del self.__game
         print("zresetowano grę....")
         print()
@@ -253,7 +260,7 @@ class ConnectFour:
         self.__player = choice([True, False])
 
         self.__game = GameFunctions(self.__window_heigh, self.__window_width,
-                                    self.__end_game, self.__tpoles, self.__tlevels, self.__player,
+                                    self.end_game, self.__tpoles, self.__tlevels, self.__player,
                                     self.__ai_player, self.__diff)
         self.change_level()
         if self.__ai_player:
@@ -285,7 +292,7 @@ class ConnectFour:
         print("przeładowano okno gry...")
         self.__game.draw()
 
-    def __end_game(self, info):
+    def end_game(self, info):
         """Metoda odpowiedzialna za wyświetlanie dodatkowego okna i kończenie gry."""
         display = ""
         if info == 1:
@@ -304,3 +311,5 @@ class ConnectFour:
             self.__reset_game()
         else:
             self.__window.destroy()
+
+        return display
