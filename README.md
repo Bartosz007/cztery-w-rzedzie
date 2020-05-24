@@ -1,5 +1,3 @@
-Bartosz Krawczyk
-Album: 130534
 # Projekt cztery w rzędzie
 >Jest gra logiczna, w której toczy się dopóki jeden z graczy nie ułoży czterech pinków w rzędzie
 
