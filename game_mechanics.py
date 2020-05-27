@@ -1,13 +1,11 @@
 """Plik przechowujący klasę odpowiadającą za mechanikę gry."""
 
-from gracz_komputerowy import GraczKomputerowy
+import constans
 
-COLS = 7
-ROWS = 6
-MAX_HITS = 41
+from computer_player import ComputerPlayer
 
 
-class GameFunctions:
+class GameMechanics:
     """Klasę odpowiadająca za mechanikę gry."""
 
     def __init__(self, heigh, width, endgame, tpoles, tlevels, player, aiplayer, diff):
@@ -40,17 +38,17 @@ class GameFunctions:
 
         self.__canvas.create_rectangle(0, 0, self.__width, self.__heigh * 0.7, fill="#8A3500")
 
-        rect_heigh = (self.__heigh * 0.60 / ROWS)
+        rect_heigh = (self.__heigh * 0.60 / constans.ROWS)
         rect_width = rect_heigh
-        heigh_hole = (self.__heigh * 0.7 - (rect_heigh * 6)) / 7  # 7odstępów
-        width_hole = (self.__width - (rect_heigh * 7)) / 8  # 8 odstępów
+        heigh_hole = (self.__heigh * 0.7 - (rect_heigh * constans.ROWS)) / 7  # 7odstępów
+        width_hole = (self.__width - (rect_heigh * constans.COLS)) / 8  # 8 odstępów
 
-        for i in range(ROWS):
-            for j in range(COLS):
+        for i in range(constans.ROWS):
+            for j in range(constans.COLS):
                 color = "white"
-                if self.tpoles[i][j] == -1:
+                if self.tpoles[i][j] == -constans.COIN:
                     color = "#FF2200"
-                elif self.tpoles[i][j] == 1:
+                elif self.tpoles[i][j] == constans.COIN:
                     color = "#FF9B21"
 
                 self.__canvas.create_oval(width_hole * (1 + j) + rect_width * (1 + j),
@@ -106,19 +104,19 @@ class GameFunctions:
 
         status = False
         if self.__player:  # gracz nr 1
-            self.tpoles[row][col] = -1
+            self.tpoles[row][col] = -constans.COIN
             self.set_stat("Tura gracza 2")  # jeśli gramy z graczem drugim
 
-            status = self.check(row, col, -1)
+            status = self.check(row, col, -constans.COIN)
             if status:
                 # funckja z kończeniem gry
                 self.set_stat("Wygrał gracz numer 1")
 
         else:
-            self.tpoles[row][col] = 1  # gracz nr 2
+            self.tpoles[row][col] = constans.COIN  # gracz nr 2
 
             self.set_stat("Tura gracza 1")
-            status = self.check(row, col, 1)
+            status = self.check(row, col, constans.COIN)
             if status:  # funckja z kończeniem gry
                 self.set_stat("Wygrał gracz numer 2")
 
@@ -129,18 +127,18 @@ class GameFunctions:
 
         if status:
             if self.__player:
-                self.__end_game(1)
-                return 1
+                self.__end_game(constans.PLAYER_ONE_WON)
+                return constans.PLAYER_ONE_WON
             else:
-                self.__end_game(2)
-                return 2
+                self.__end_game(constans.PLAYER_TWO_WON)
+                return constans.PLAYER_TWO_WON
 
-        self.hits = self.hits + 1
-        if self.hits > MAX_HITS:
-            self.__end_game(4)
-            return 3
+        self.hits += 1
+        if self.hits > constans.MAX_HITS:
+            self.__end_game(constans.DRAW)
+            return constans.DRAW
 
-        self.__tlevels[col] = self.__tlevels[col] - 1
+        self.__tlevels[col] -= 1
         self.__player = not self.__player
 
         return 0
@@ -158,71 +156,71 @@ class GameFunctions:
             self.set_stat("Brak miejsca w tej kolumnie, strzel ponownie...")
             return
 
-        self.tpoles[row][col] = -1
+        self.tpoles[row][col] = -constans.COIN
 
-        status = self.check(row, col, -1)
+        status = self.check(row, col, -constans.COIN)
         if status:
             self.set_stat("Wygrał gracz numer 1")
             # funckja z kończeniem gry
 
-        self.__tlevels[col] = self.__tlevels[col] - 1
+        self.__tlevels[col] -= 1
 
         self.draw()
 
         if status:
-            self.__end_game(1)
-            return
+            self.__end_game(constans.PLAYER_ONE_WON)
+            return constans.PLAYER_ONE_WON
 
-        self.hits = self.hits + 1
-        if self.hits > MAX_HITS:
+        self.hits += 1
+        if self.hits > constans.MAX_HITS:
             self.set_stat("Remis")
-            self.__end_game(4)
-            return
+            self.__end_game(constans.DRAW)
+            return constans.DRAW
 
         self.set_stat("Komputer myśli...")
 
         # ---------------sekcja komputera---------------------
-        computer = GraczKomputerowy(self.tpoles, self.__tlevels, self.__diff)
+        computer = ComputerPlayer(self.tpoles, self.__tlevels, self.__diff)
         col2 = computer.make_move()
 
         row2 = self.__tlevels[col2]
 
-        self.tpoles[row2][col2] = 1
+        self.tpoles[row2][col2] = constans.COIN
 
-        status = self.check(row2, col2, 1)
+        status = self.check(row2, col2, constans.COIN)
         if status:  # funckja z kończeniem gry
             self.set_stat("Wygrał komputer...")
 
-        self.__tlevels[col2] = self.__tlevels[col2] - 1
+        self.__tlevels[col2] -= 1
         self.draw()
 
         if status:
-            self.__end_game(3)
-            return
+            self.__end_game(constans.COMPUTER_WON)
+            return constans.COMPUTER_WON
 
-        self.hits = self.hits + 1
-        if self.hits > MAX_HITS:
+        self.hits += 1
+        if self.hits > constans.MAX_HITS:
             self.set_stat("Remis")
-            self.__end_game(4)
-            return
+            self.__end_game(constans.DRAW)
+            return constans.DRAW
 
         self.set_stat("Tura gracza 1")
 
     def check(self, row, col, sign):
         """Metoda sprawdzająca stan gry."""
         counter = 0
-        for i in range(COLS):
+        for i in range(constans.COLS):
             if self.tpoles[row][i] == sign:
-                counter = counter + 1
+                counter += 1
                 if counter == 4:
                     return True
             else:
                 counter = 0
 
         counter = 0
-        for i in range(ROWS):
+        for i in range(constans.ROWS):
             if self.tpoles[i][col] == sign:
-                counter = counter + 1
+                counter += 1
                 if counter == 4:
                     return True
             else:
@@ -237,35 +235,35 @@ class GameFunctions:
         bcol = abs(eqal - col)
 
         counter = 0
-        while brow < 6 and bcol < 7:
+        while brow < constans.ROWS and bcol < constans.COLS:
             if self.tpoles[brow][bcol] == sign:
-                counter = counter + 1
+                counter += 1
                 if counter == 4:
                     return True
             else:
                 counter = 0
-            brow = brow + 1
-            bcol = bcol + 1
+            brow += 1
+            bcol += 1
 
         # przekątna od prawej góra do lewej dół
-        if (col + row) < 7:
+        if (col + row) < constans.COLS:
             bcol = col + row
             brow = 0
         else:
-            bcol = 6
-            brow = row - (6 - col)
+            bcol = constans.ROWS
+            brow = row - (constans.ROWS - col)
         counter = 0
-        while brow < 6 and bcol >= 0:
+        while brow < constans.ROWS and bcol >= 0:
 
             if self.tpoles[brow][bcol] == sign:
-                counter = counter + 1
+                counter += 1
                 #     print(counter,brow,bcol)
                 if counter == 4:
                     return True
             else:
                 counter = 0
 
-            brow = brow + 1
-            bcol = bcol - 1
+            brow += 1
+            bcol -= 1
 
         return False

@@ -1,18 +1,16 @@
 """Plik zaiwerający klasę, obsługującą gracza komputerowego."""
 from random import randint
 
-COLS = 7
-ROWS = 6
-INF = 999999999
+import constans
 
 
-class GraczKomputerowy:
+class ComputerPlayer:
     """Klasa obsługująca gracza komputerowego."""
 
     def __init__(self, tpoles, tlevels, diff):
         """Konstruktor przyjmujący podstawowe dane do późnijeszych obliczeń."""
-        self.__ctpoles = [[tpoles[row][col] for col in range(COLS)] for row in range(ROWS)]
-        self.__ctlevels = [tlevels[x] for x in range(COLS)]
+        self.__ctpoles = [[tpoles[row][col] for col in range(constans.COLS)] for row in range(constans.ROWS)]
+        self.__ctlevels = [tlevels[x] for x in range(constans.COLS)]
         self.__diff = diff
 
     def make_move(self):
@@ -53,14 +51,14 @@ class GraczKomputerowy:
         if depth == 0 or len(fields) == 0:
             return None, self.score_board(tpoles)
         if maximazing:
-            value = -INF
+            value = -constans.INF
             column = 1
             for row, col in fields:
-                ctpoles = [[tpoles[r][c] for c in range(COLS)] for r in range(ROWS)]
-                ctlevels = [tlevels[x] for x in range(COLS)]
+                ctpoles = [[tpoles[r][c] for c in range(constans.COLS)] for r in range(constans.ROWS)]
+                ctlevels = [tlevels[x] for x in range(constans.COLS)]
 
                 ctpoles[row][col] = 1
-                ctlevels[col] = ctlevels[col] - 1
+                ctlevels[col] -= 1
 
                 score = self.minimax(ctpoles, ctlevels, depth - 1, False)[1]
                 if score > value:
@@ -69,14 +67,14 @@ class GraczKomputerowy:
 
             return column, value
         else:
-            value = INF
+            value = constans.INF
             column = 1
             for row, col in fields:
-                ctpoles = [[tpoles[r][c] for c in range(COLS)] for r in range(ROWS)]
-                ctlevels = [tlevels[x] for x in range(COLS)]
+                ctpoles = [[tpoles[r][c] for c in range(constans.COLS)] for r in range(constans.ROWS)]
+                ctlevels = [tlevels[x] for x in range(constans.COLS)]
 
                 ctpoles[row][col] = -1
-                ctlevels[col] = ctlevels[col] - 1
+                ctlevels[col] -= 1
 
                 score = self.minimax(ctpoles, ctlevels, depth - 1, True)[1]
                 if score < value:
@@ -92,49 +90,49 @@ class GraczKomputerowy:
         Metoda analizuje aktualny stan planszy i zwraca ocenę."""
         pos = [0 for i in range(9)]
 
-        for i in range(ROWS):
+        for i in range(constans.ROWS):
             score = 0
             for j in range(3):
-                score = score + tpoles[i][j]
+                score += tpoles[i][j]
 
-            for j in range(3, COLS):
-                score = score + tpoles[i][j]
-                pos[score + 4] = pos[score + 4] + 1
+            for j in range(3, constans.COLS):
+                score += tpoles[i][j]
+                pos[score + 4] += + 1
 
-                score = score - tpoles[i][j - 3]
+                score -= tpoles[i][j - 3]
 
-        for i in range(COLS):
+        for i in range(constans.COLS):
             score = 0
             for j in range(3):
-                score = score + tpoles[j][i]
+                score += tpoles[j][i]
 
-            for j in range(3, ROWS):
-                score = score + tpoles[j][i]
-                pos[score + 4] = pos[score + 4] + 1
+            for j in range(3, constans.ROWS):
+                score += tpoles[j][i]
+                pos[score + 4] += 1
 
-                score = score - tpoles[j - 3][i]
+                score -= tpoles[j - 3][i]
 
-        for i in range(ROWS - 3):
-            for j in range(COLS - 3):
+        for i in range(constans.ROWS - 3):
+            for j in range(constans.COLS - 3):
                 score = 0
 
                 for shift in range(4):
                     row = i + shift
                     col = j + shift
-                    score = score - score + tpoles[row][col]
+                    score -= tpoles[row][col]
 
-                pos[score + 4] = pos[score + 4] + 1
+                pos[score + 4] += 1
 
-        for i in range(3, ROWS):
-            for j in range(COLS - 3):
+        for i in range(3, constans.ROWS):
+            for j in range(constans.COLS - 3):
                 score = 0
 
                 for shift in range(4):
                     row = i - shift
                     col = j + shift
-                    score = score + tpoles[row][col]
+                    score += tpoles[row][col]
 
-                pos[score + 4] = pos[score + 4] + 1
+                pos[score + 4] += 1
 
         player = 0 * pos[0] + 5 * pos[1] + 2 * pos[2] + pos[3]
         computer = pos[5] + 2 * pos[6] + 5 * pos[7] + 0 * pos[8]

@@ -2,7 +2,7 @@
 
 import tkinter as tk
 
-import okno_gry
+import game_frame
 
 
 def main():
@@ -11,7 +11,7 @@ def main():
     tk.window = tk.Tk()
     tk.window.title("Cztery w rzędzie")  # napis na oknie
 
-    game = okno_gry.ConnectFour(tk.window)
+    game = game_frame.GameFrame(tk.window)
 
     game.load_geometry()
     game.start_game()
