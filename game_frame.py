@@ -6,7 +6,7 @@ from tkinter import messagebox
 
 import game_mechanics
 import players
-from utils.constants import Basic, GameStatus, Style
+from utils.constants import Basic, Style
 from utils.players_utils import start_data
 
 GLOBAL_SCALE = 1
@@ -47,7 +47,8 @@ class GameFrame:
         difficulty = 0
 
         first_player = players.human_player.HumanPlayer(board, levels, Basic.PLAYER_ONE)
-        second_player = players.computer_player.ComputerPlayer(board, levels, Basic.PLAYER_TWO, difficulty)
+        second_player = players.computer_player.ComputerPlayer(board, levels,
+                                                               Basic.PLAYER_TWO, difficulty)
         players_array = [first_player, second_player]
 
         self.__game = game_mechanics.GameMechanics(self.__window_height, self.__window_width,
@@ -153,8 +154,9 @@ class GameFrame:
         else:
             self.__rbt_player.select()
 
-        l_dm = tk.Label(f_difficulty_menu, width=int(self.__window_width / 20), bg=Style.BACKGROUND_COLOR,
-                        text="Poziom trudności: ", font=(Style.FONT, Style.FONT_SIZE - 1))
+        l_dm = tk.Label(f_difficulty_menu, width=int(self.__window_width / 20),
+                        bg=Style.BACKGROUND_COLOR, text="Poziom trudności: ",
+                        font=(Style.FONT, Style.FONT_SIZE - 1))
         l_dm.pack(side=tk.TOP)
         levels = ("Losowy", "Łatwy", "Też łatwy", "Średni", "Trudny", "Bardzo trudny", "Uber")
         self.__s_difficulty = tk.Spinbox(f_difficulty_menu, width=int(self.__window_width / 25),
@@ -166,7 +168,8 @@ class GameFrame:
 
         # panel Reset
         bt_reset = tk.Button(f_reset_menu, text="Reset", padx=int(self.__window_width / 30),
-                             pady=self.__window_height, font=(Style.FONT, Style.FONT_SIZE + 5), bg=Style.BUTTON_COLOR)
+                             pady=self.__window_height, font=(Style.FONT, Style.FONT_SIZE + 5),
+                             bg=Style.BUTTON_COLOR)
         bt_reset.config(command=self.__reset_game)
         bt_reset.pack()
 
@@ -228,9 +231,11 @@ class GameFrame:
         first_player = players.human_player.HumanPlayer(board, levels, Basic.PLAYER_ONE)
 
         if old_second_player == Basic.COMPUTER:
-            difficulties = ["Losowy", "Łatwy", "Też łatwy", "Średni", "Trudny", "Bardzo trudny", "Uber"]
+            difficulties = ["Losowy", "Łatwy", "Też łatwy",
+                            "Średni", "Trudny", "Bardzo trudny", "Uber"]
             index = difficulties.index(self.__s_difficulty.get())
-            new_second_player = players.computer_player.ComputerPlayer(board, levels, Basic.PLAYER_TWO, index)
+            new_second_player = players.computer_player.ComputerPlayer(board, levels,
+                                                                       Basic.PLAYER_TWO, index)
         else:
             new_second_player = players.human_player.HumanPlayer(board, levels, Basic.PLAYER_TWO)
 

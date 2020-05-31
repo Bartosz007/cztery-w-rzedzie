@@ -1,15 +1,16 @@
+"""Plik klas ze stałymi"""
+
 class GameStatus:
+    """Stałe dotyczące wyniku gry"""
     COLUMN_FULL = 0
     COLUMN_NOT_FULL = 1
     STILL_IN_GAME = 2
     DRAW = 3
-    PLAYER_ONE_WON = 4
-    PLAYER_TWO_WON = 5
-    COMPUTER_WON = 6
     WON = 7
 
 
 class Style:
+    """Stałe dotyczące wyglądu"""
     BACKGROUND_COLOR = "#296380"
     BUTTON_COLOR = "#D15304"
 
@@ -24,6 +25,7 @@ class Style:
 
 
 class Basic:
+    """Podstawowe stałe gry"""
     COLS = 7
     ROWS = 6
     COIN = 1
@@ -36,4 +38,3 @@ class Basic:
 
     PLAYER_ONE = 1
     PLAYER_TWO = -1
-

@@ -16,7 +16,7 @@ class HumanPlayer:
         self.player_number = player_number
 
         # po tym numerze identyfikujemy gracza, ale nie można wypisać drugiego gracza jako -1
-        print_number = player_number  #
+
         if player_number < 0:
             player_number = 2
 

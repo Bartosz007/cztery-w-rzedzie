@@ -34,7 +34,8 @@ class GameMechanics:
         Czyści całe okno gry a nastęnie rysuje wszystko od nowa."""
         self.__canvas.delete("all")
 
-        self.__canvas.create_rectangle(0, 0, self.__width, self.__height * 0.7, fill=Style.CANVAS_BACKGROUND)
+        self.__canvas.create_rectangle(0, 0, self.__width, self.__height * 0.7,
+                                       fill=Style.CANVAS_BACKGROUND)
 
         rect_height = (self.__height * 0.60 / Basic.ROWS)
         rect_width = rect_height
@@ -98,9 +99,11 @@ class GameMechanics:
         """Metoda odzpowiedzialna za zmianę gracza po każdym strzale."""
 
         if self.players_array[1].type_of_player == Basic.COMPUTER:
-            self.players_array[1] = human_player.HumanPlayer(self.board, self.levels, Basic.PLAYER_TWO)
+            self.players_array[1] = human_player.HumanPlayer(self.board, self.levels,
+                                                             Basic.PLAYER_TWO)
         else:
-            self.players_array[1] = computer_player.ComputerPlayer(self.board, self.levels, difficulty)
+            self.players_array[1] = computer_player.ComputerPlayer(self.board, self.levels,
+                                                                   difficulty)
 
         self.current_player = 0
         self.set_stat(self.players_array[self.current_player].begin_info)
