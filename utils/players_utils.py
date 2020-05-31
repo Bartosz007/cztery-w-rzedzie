@@ -2,7 +2,7 @@
 
 import random
 
-from utils.constans import Basic
+from utils.constants import Basic
 
 INF = 99999999999999
 
@@ -86,6 +86,23 @@ def score_board(board):
         return computer - player
 
 
+def start_data():
+    """Funkcja zwraacjąca domyślne tablice
+
+    Zwraca początkowe tablice wymagane do dalszej gry"""
+    board = [[Basic.EMPTY_POSITION for col in range(Basic.COLS)] for row in range(Basic.ROWS)]
+    levels = [Basic.DEFAULT_POSITION for col in range(Basic.COLS)]
+
+    return board, levels
+
+
+def copy_data(board, levels):
+    """Funkcja zwraca kopie podanych w parametrach tablic"""
+    c_board = [[board[r][c] for c in range(Basic.COLS)] for r in range(Basic.ROWS)]
+    c_levels = [levels[x] for x in range(Basic.COLS)]
+    return c_board, c_levels
+
+
 def minimax(board, levels, depth, maximazing):
     """Funkcja wybierająca najoptymalniejsze pole strzału algorytmem minimax."""
     fields = right_fields(levels)
@@ -95,8 +112,7 @@ def minimax(board, levels, depth, maximazing):
         value = -INF
         column = 1
         for row, col in fields:
-            c_board = [[board[r][c] for c in range(Basic.COLS)] for r in range(Basic.ROWS)]
-            c_levels = [levels[x] for x in range(Basic.COLS)]
+            c_board, c_levels = copy_data(board, levels)
 
             c_board[row][col] = 1
             c_levels[col] -= 1
@@ -111,8 +127,7 @@ def minimax(board, levels, depth, maximazing):
         value = INF
         column = 1
         for row, col in fields:
-            c_board = [[board[r][c] for c in range(Basic.COLS)] for r in range(Basic.ROWS)]
-            c_levels = [levels[x] for x in range(Basic.COLS)]
+            c_board, c_levels = copy_data(board, levels)
 
             c_board[row][col] = -1
             c_levels[col] -= 1

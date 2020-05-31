@@ -1,9 +1,8 @@
 """Plik przechowujący klasę odpowiadającą za mechanikę gry."""
 
-import players.computer_player as cp
-import players.human_player as hp
-
-from utils.constans import GameStatus, Basic
+from players import computer_player
+from players import human_player
+from utils.constants import Basic, GameStatus, Style
 
 MAX_HITS = 41
 
@@ -11,27 +10,21 @@ MAX_HITS = 41
 class GameMechanics:
     """Klasę odpowiadająca za mechanikę gry."""
 
-    def __init__(self, heigh, width, endgame, board, levels, first_player, second_player):
+    def __init__(self, height, width, endgame, board, levels, players_array, canvas, stat):
         """Konstruktor ładujący podstawowe zmienne.
 
         Laduje zmienne używane w następnych metodach"""
-        self.__heigh = heigh
+        self.__height = height
         self.__width = width
         self.__end_game = endgame
 
         self.board = board
         self.levels = levels
-        self.first_player = first_player
-        self.second_player = second_player
+        self.players_array = players_array
 
-        self.round = True  # musi ona występować, aby następowała zmienność tur
+        self.current_player = 0  # musi ona występować, aby następowała zmienność tur
         self.hits = 0
 
-        self.__canvas = None
-        self.__stat = None
-
-    def set_geometry(self, canvas, stat):
-        """Metoda ładująca obiekt rysowniczy."""
         self.__canvas = canvas
         self.__stat = stat
 
@@ -41,25 +34,25 @@ class GameMechanics:
         Czyści całe okno gry a nastęnie rysuje wszystko od nowa."""
         self.__canvas.delete("all")
 
-        self.__canvas.create_rectangle(0, 0, self.__width, self.__heigh * 0.7, fill="#8A3500")
+        self.__canvas.create_rectangle(0, 0, self.__width, self.__height * 0.7, fill=Style.CANVAS_BACKGROUND)
 
-        rect_heigh = (self.__heigh * 0.60 / Basic.ROWS)
-        rect_width = rect_heigh
-        heigh_hole = (self.__heigh * 0.7 - (rect_heigh * Basic.ROWS)) / 7  # 7odstępów
-        width_hole = (self.__width - (rect_heigh * Basic.COLS)) / 8  # 8 odstępów
+        rect_height = (self.__height * 0.60 / Basic.ROWS)
+        rect_width = rect_height
+        height_hole = (self.__height * 0.7 - (rect_height * Basic.ROWS)) / Basic.COLS  # 7odstępów
+        width_hole = (self.__width - (rect_height * Basic.COLS)) / (Basic.COLS + 1)  # 8 odstępów
 
         for i in range(Basic.ROWS):
             for j in range(Basic.COLS):
-                color = "white"
+                color = Style.DEFAULT_COIN_COLOR
                 if self.board[i][j] == -Basic.COIN:
-                    color = "#FF2200"
+                    color = Style.PLAYER_ONE_COLOR
                 elif self.board[i][j] == Basic.COIN:
-                    color = "#FF9B21"
+                    color = Style.PLAYER_TWO_COLOR
 
                 self.__canvas.create_oval(width_hole * (1 + j) + rect_width * (1 + j),
-                                          heigh_hole * (1 + i) + rect_heigh * (1 + i),
+                                          height_hole * (1 + i) + rect_height * (1 + i),
                                           width_hole * (1 + j) + rect_width * j,
-                                          heigh_hole * (1 + i) + rect_heigh * i,
+                                          height_hole * (1 + i) + rect_height * i,
                                           fill=color, outline=color)
 
     def hit(self, col=0):
@@ -67,90 +60,59 @@ class GameMechanics:
 
         Pilnuje kolejności graczy i sprawdza stan gry"""
 
-        if self.round:
+        player = self.players_array[self.current_player]
 
-            status = self.first_player.make_move(col, 1)
-            if status == GameStatus.WON:
-                self.set_stat("Wygrał gracz numer 1")
-                self.__end_game(GameStatus.PLAYER_ONE_WON)
-                return GameStatus.PLAYER_ONE_WON
-            elif status == GameStatus.COLUMN_NOT_FULL:
-                self.round = not self.round
-                self.hits += 1
-
-                try:
-                    self.draw()
-                except:
-                    print("Nie uzyskano elementu rysowniczego")
-
-                if self.hits > MAX_HITS:
-                    self.__end_game(GameStatus.DRAW)
-                    self.set_stat("Remis!")
-                    return GameStatus.DRAW
-
-                if isinstance(self.second_player, cp.ComputerPlayer):
-                    self.set_stat("Tura komputera")
-                    self.hit()  # sztuczne wywołanie akcji komputera
-                else:
-                    self.set_stat("Tura drugiego gracza")
+        status = player.make_move(col, player.player_number)
+        if status == GameStatus.WON:
+            self.set_stat(player.end_info)
+            self.__end_game(player.end_info)
+            return GameStatus.WON
+        elif status == GameStatus.COLUMN_NOT_FULL:
+            if self.current_player:
+                self.current_player = 0
             else:
-                self.set_stat("Podana kolumna jest zajęta")
+                self.current_player = 1
 
-            # make_move może też zwrócić COLUMN_FULL, czyli gracz musi strzelić jeszcze raz
+            self.hits += 1
+
+            try:
+                self.draw()
+            except AttributeError:
+                print("Nie uzyskano elementu rysowniczego")
+
+            if self.hits > MAX_HITS:
+                self.__end_game("Remis!")
+                self.set_stat("Remis!")
+                return GameStatus.DRAW
+
+            self.set_stat(self.players_array[self.current_player].turn_info)
+            if self.players_array[self.current_player].type_of_player == Basic.COMPUTER:
+                self.hit()
 
         else:
-            status = self.second_player.make_move(col, -1)
-            if status == GameStatus.WON:
-                if isinstance(self.second_player, cp.ComputerPlayer):
-                    self.set_stat("Wygrał komputer")
-                    self.__end_game(GameStatus.COMPUTER_WON)
-                    return GameStatus.COMPUTER_WON
-                else:
-                    self.set_stat("Wygrał gracz numer 2")
-                    self.__end_game(GameStatus.PLAYER_TWO_WON)
-                    return GameStatus.PLAYER_ONE_WON
-
-            elif status == GameStatus.COLUMN_NOT_FULL:
-                self.round = not self.round
-                self.hits += 1
-                self.set_stat("Tura pierwszego gracza")
-
-                try:
-                    self.draw()
-                except:
-                    print("Nie uzyskano elementu rysowniczego")
-
-                if self.hits > MAX_HITS:
-                    self.__end_game(GameStatus.DRAW)
-                    self.set_stat("Remis!")
-                    return GameStatus.DRAW
-            else:
-                self.set_stat("Podana kolumna jest zajęta")
+            self.set_stat("Brak miejsca w tej kolumnie, strzel ponownie...")
 
         return GameStatus.STILL_IN_GAME
 
     def change_player(self, difficulty=0):
         """Metoda odzpowiedzialna za zmianę gracza po każdym strzale."""
-        if isinstance(self.second_player, cp.ComputerPlayer):
-            if self.round:
-                self.set_stat("Zaczyna gracz numer 1")
-            else:
-                self.set_stat("Zaczyna gracz numer 2")
 
-            self.second_player = hp.HumanPlayer(self.board, self.levels)
+        if self.players_array[1].type_of_player == Basic.COMPUTER:
+            self.players_array[1] = human_player.HumanPlayer(self.board, self.levels, Basic.PLAYER_TWO)
         else:
-            self.round = True
-            self.set_stat("Zaczyna gracz numer 1")
-            self.second_player = cp.ComputerPlayer(self.board, self.levels, difficulty)
+            self.players_array[1] = computer_player.ComputerPlayer(self.board, self.levels, difficulty)
 
-    def change_diff(self, txt):
+        self.current_player = 0
+        self.set_stat(self.players_array[self.current_player].begin_info)
+
+    def change_difficulty(self, txt):
         """Metoda zmieniająca poziom trudności gracza komputerowego."""
 
-        diffs = ["Losowy", "Łatwy", "Też łatwy", "Średni", "Trudny", "Bardzo trudny", "Uber"]
-        index = diffs.index(txt)
+        difficulties = ["Losowy", "Łatwy", "Też łatwy", "Średni", "Trudny", "Bardzo trudny", "Uber"]
+        index = difficulties.index(txt)
 
-        if isinstance(self.second_player, cp.ComputerPlayer):
-            self.second_player.change_difficulty(index)
+        if self.players_array[1].type_of_player == Basic.COMPUTER:
+            self.players_array[1].change_difficulty(index)
 
     def set_stat(self, text):
         """Metoda odpowiedzialna za zmianę komunikatu."""

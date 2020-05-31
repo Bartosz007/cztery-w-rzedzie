@@ -1,7 +1,7 @@
 """Plik zawierający klasę, obsługującą gracza komputerowego."""
 
+from utils.constants import Basic, GameStatus
 import utils.players_utils as pu
-from utils.constans import Basic, GameStatus
 
 INF = 99999999999999
 
@@ -9,11 +9,17 @@ INF = 99999999999999
 class ComputerPlayer:
     """Klasa obsługująca gracza komputerowego."""
 
-    def __init__(self, board, levels, difficulty):
+    def __init__(self, board, levels, player_number, difficulty):
         """Konstruktor przyjmujący podstawowe dane do późnijeszych obliczeń."""
         self.board = board
         self.levels = levels
         self.difficulty = difficulty
+        self.type_of_player = Basic.COMPUTER
+
+        self.player_number = player_number
+        self.begin_info = "Zaczyna komputer"
+        self.turn_info = "Tura komputera"
+        self.end_info = f"Wygrał komputer"
 
     def change_difficulty(self, difficulty):
         """Odpowiada za zmianę poziomu umiejętności gracza komputerowego."""
@@ -29,9 +35,7 @@ class ComputerPlayer:
         Wykonuje również test na zwycięstwo."""
 
         # kopiowanie planszy do późnijeszych obliczeń
-        c_board = [[self.board[row][col] for col in range(Basic.COLS)] for row in range(Basic.ROWS)]
-        c_levels = [self.levels[x] for x in range(Basic.COLS)]
-
+        c_board, c_levels = pu.copy_data(self.board, self.levels)
         fields = pu.right_fields(c_levels)
         col = 0
         if self.difficulty == 0:

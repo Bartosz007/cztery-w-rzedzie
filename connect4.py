@@ -12,8 +12,6 @@ def main():
     tk.window.title("Cztery w rzędzie")  # napis na oknie
 
     game = game_frame.GameFrame(tk.window)
-
-    game.load_geometry()
     game.start_game()
 
 
