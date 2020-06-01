@@ -114,7 +114,7 @@ def minimax(board, levels, depth, maximazing):
         for row, col in fields:
             c_board, c_levels = copy_data(board, levels)
 
-            c_board[row][col] = 1
+            c_board[row][col] = Basic.COIN
             c_levels[col] -= 1
             score = minimax(c_board, c_levels, depth - 1, False)[1]
             if score > value:
@@ -129,7 +129,7 @@ def minimax(board, levels, depth, maximazing):
         for row, col in fields:
             c_board, c_levels = copy_data(board, levels)
 
-            c_board[row][col] = -1
+            c_board[row][col] = -Basic.COIN
             c_levels[col] -= 1
 
             score = minimax(c_board, c_levels, depth - 1, True)[1]

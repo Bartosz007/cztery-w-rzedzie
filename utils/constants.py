@@ -1,5 +1,6 @@
 """Plik klas ze stałymi"""
 
+
 class GameStatus:
     """Stałe dotyczące wyniku gry"""
     COLUMN_FULL = 0

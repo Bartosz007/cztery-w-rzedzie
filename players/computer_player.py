@@ -1,7 +1,8 @@
 """Plik zawierający klasę, obsługującą gracza komputerowego."""
 
+from utils import players_utils
 from utils.constants import Basic, GameStatus
-import utils.players_utils as pu
+
 
 INF = 99999999999999
 
@@ -35,19 +36,19 @@ class ComputerPlayer:
         Wykonuje również test na zwycięstwo."""
 
         # kopiowanie planszy do późnijeszych obliczeń
-        c_board, c_levels = pu.copy_data(self.board, self.levels)
-        fields = pu.right_fields(c_levels)
-        col = 0
+        c_board, c_levels = players_utils.copy_data(self.board, self.levels)
+        fields = players_utils.right_fields(c_levels)
+
         if self.difficulty == 0:
-            col = pu.random_field(fields)
+            col = players_utils.random_field(fields)
         else:
-            col = pu.minimax(c_board, c_levels, self.difficulty, True)[0]
+            col = players_utils.minimax(c_board, c_levels, self.difficulty, True)[0]
 
         row = self.levels[col]
 
         self.board[row][col] = -Basic.COIN
 
-        status = pu.check(self.board, row, col, -Basic.COIN)
+        status = players_utils.check(self.board, row, col, -Basic.COIN)
         if status:
             return GameStatus.WON
 

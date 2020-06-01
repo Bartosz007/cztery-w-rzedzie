@@ -24,7 +24,6 @@ class HumanPlayer:
         self.turn_info = f"Tura gracza numer {player_number}"
         self.end_info = f"Wygrał gracz numer {player_number}"
 
-
     def make_move(self, col, sign):
         """Metoda wywołana po wybraniu kolumny przez gracza
 

@@ -6,8 +6,9 @@ from tkinter import messagebox
 
 import game_mechanics
 import players
+from utils import players_utils
 from utils.constants import Basic, Style
-from utils.players_utils import start_data
+
 
 GLOBAL_SCALE = 1
 WINDOW_SCALE_W = GLOBAL_SCALE * 0.6
@@ -43,7 +44,7 @@ class GameFrame:
         self.__s_difficulty = None
         self.load_geometry()
 
-        board, levels = start_data()
+        board, levels = players_utils.start_data()
         difficulty = 0
 
         first_player = players.human_player.HumanPlayer(board, levels, Basic.PLAYER_ONE)
@@ -113,7 +114,7 @@ class GameFrame:
         self.__stat.pack(side=tk.TOP)
 
         # panel przycisków
-        fixed_window_width = self.__window_width * 0.95 / 7
+        fixed_window_width = self.__window_width * 0.95 / Basic.COLS
         for index in range(Basic.COLS):
             frame = tk.Frame(f_top_in_menu, width=fixed_window_width,
                              height=self.__window_height * 0.1, bg=Style.BACKGROUND_COLOR)
@@ -226,7 +227,7 @@ class GameFrame:
         print("zresetowano grę....")
         print()
 
-        board, levels = start_data()
+        board, levels = players_utils.start_data()
 
         first_player = players.human_player.HumanPlayer(board, levels, Basic.PLAYER_ONE)
 
