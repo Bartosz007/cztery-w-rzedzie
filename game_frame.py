@@ -7,7 +7,8 @@ from tkinter import messagebox
 import game_mechanics
 import players
 from utils import players_utils
-from utils.constants import Basic, Style
+from utils.constants import Basic
+from utils.constants import Style
 
 
 GLOBAL_SCALE = 1
@@ -114,8 +115,8 @@ class GameFrame:
         self.__stat.pack(side=tk.TOP)
 
         # panel przycisków
-        fixed_window_width = self.__window_width * 0.95 / Basic.COLS
-        for index in range(Basic.COLS):
+        fixed_window_width = self.__window_width * 0.95 / Basic.NUM_COLUMNS
+        for index in range(Basic.NUM_COLUMNS):
             frame = tk.Frame(f_top_in_menu, width=fixed_window_width,
                              height=self.__window_height * 0.1, bg=Style.BACKGROUND_COLOR)
             frame.pack_propagate(0)

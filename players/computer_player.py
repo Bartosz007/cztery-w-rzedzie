@@ -1,7 +1,8 @@
 """Plik zawierający klasę, obsługującą gracza komputerowego."""
 
 from utils import players_utils
-from utils.constants import Basic, GameStatus
+from utils.constants import Basic
+from utils.constants import GameStatus
 
 
 INF = 99999999999999
@@ -20,7 +21,7 @@ class ComputerPlayer:
         self.player_number = player_number
         self.begin_info = "Zaczyna komputer"
         self.turn_info = "Tura komputera"
-        self.end_info = f"Wygrał komputer"
+        self.end_info = "Wygrał komputer"
 
     def change_difficulty(self, difficulty):
         """Odpowiada za zmianę poziomu umiejętności gracza komputerowego."""

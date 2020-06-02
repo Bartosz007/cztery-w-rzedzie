@@ -27,8 +27,8 @@ class Style:
 
 class Basic:
     """Podstawowe stałe gry"""
-    COLS = 7
-    ROWS = 6
+    NUM_COLUMNS = 7
+    NUM_ROWS = 6
     COIN = 1
 
     DEFAULT_POSITION = 5

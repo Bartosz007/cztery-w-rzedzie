@@ -30,30 +30,30 @@ def score_board(board):
     Analizuje aktualny stan planszy i zwraca ocenę."""
     pos = [0 for i in range(9)]
 
-    for i in range(Basic.ROWS):
+    for i in range(Basic.NUM_ROWS):
         score = 0
         for j in range(3):
             score += board[i][j]
 
-        for j in range(3, Basic.COLS):
+        for j in range(3, Basic.NUM_COLUMNS):
             score += board[i][j]
             pos[score + 4] += + 1
 
             score -= board[i][j - 3]
 
-    for i in range(Basic.COLS):
+    for i in range(Basic.NUM_COLUMNS):
         score = 0
         for j in range(3):
             score += board[j][i]
 
-        for j in range(3, Basic.ROWS):
+        for j in range(3, Basic.NUM_ROWS):
             score += board[j][i]
             pos[score + 4] += 1
 
             score -= board[j - 3][i]
 
-    for i in range(Basic.ROWS - 3):
-        for j in range(Basic.COLS - 3):
+    for i in range(Basic.NUM_ROWS - 3):
+        for j in range(Basic.NUM_COLUMNS - 3):
             score = 0
 
             for shift in range(4):
@@ -63,8 +63,8 @@ def score_board(board):
 
             pos[score + 4] += 1
 
-    for i in range(3, Basic.ROWS):
-        for j in range(Basic.COLS - 3):
+    for i in range(3, Basic.NUM_ROWS):
+        for j in range(Basic.NUM_COLUMNS - 3):
             score = 0
 
             for shift in range(4):
@@ -90,16 +90,16 @@ def start_data():
     """Funkcja zwraacjąca domyślne tablice
 
     Zwraca początkowe tablice wymagane do dalszej gry"""
-    board = [[Basic.EMPTY_POSITION for col in range(Basic.COLS)] for row in range(Basic.ROWS)]
-    levels = [Basic.DEFAULT_POSITION for col in range(Basic.COLS)]
+    board = [[Basic.EMPTY_POSITION for col in range(Basic.NUM_COLUMNS)] for row in range(Basic.NUM_ROWS)]
+    levels = [Basic.DEFAULT_POSITION for col in range(Basic.NUM_COLUMNS)]
 
     return board, levels
 
 
 def copy_data(board, levels):
     """Funkcja zwraca kopie podanych w parametrach tablic"""
-    c_board = [[board[r][c] for c in range(Basic.COLS)] for r in range(Basic.ROWS)]
-    c_levels = [levels[x] for x in range(Basic.COLS)]
+    c_board = [[board[r][c] for c in range(Basic.NUM_COLUMNS)] for r in range(Basic.NUM_ROWS)]
+    c_levels = [levels[x] for x in range(Basic.NUM_COLUMNS)]
     return c_board, c_levels
 
 
@@ -143,7 +143,7 @@ def minimax(board, levels, depth, maximazing):
 def check(board, row, col, sign):
     """Funkcja sprawdzająca stan gry."""
     counter = 0
-    for i in range(Basic.COLS):
+    for i in range(Basic.NUM_COLUMNS):
         if board[row][i] == sign:
             counter += 1
             if counter == 4:
@@ -152,7 +152,7 @@ def check(board, row, col, sign):
             counter = 0
 
     counter = 0
-    for i in range(Basic.ROWS):
+    for i in range(Basic.NUM_ROWS):
         if board[i][col] == sign:
             counter += 1
             if counter == 4:
@@ -169,7 +169,7 @@ def check(board, row, col, sign):
     bcol = abs(eqal - col)
 
     counter = 0
-    while brow < Basic.ROWS and bcol < Basic.COLS:
+    while brow < Basic.NUM_ROWS and bcol < Basic.NUM_COLUMNS:
         if board[brow][bcol] == sign:
             counter += 1
             if counter == 4:
@@ -180,14 +180,14 @@ def check(board, row, col, sign):
         bcol += 1
 
         # przekątna od prawej góra do lewej dół
-    if (col + row) < Basic.COLS:
+    if (col + row) < Basic.NUM_COLUMNS:
         bcol = col + row
         brow = 0
     else:
-        bcol = Basic.ROWS
-        brow = row - (Basic.ROWS - col)
+        bcol = Basic.NUM_ROWS
+        brow = row - (Basic.NUM_ROWS - col)
     counter = 0
-    while brow < Basic.ROWS and bcol >= 0:
+    while brow < Basic.NUM_ROWS and bcol >= 0:
         if board[brow][bcol] == sign:
             counter += 1
             if counter == 4:

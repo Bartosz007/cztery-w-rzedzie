@@ -1,7 +1,8 @@
 """Plik zawierający klasę gracza"""
 
 from utils import players_utils
-from utils.constants import Basic, GameStatus
+from utils.constants import Basic
+from utils.constants import GameStatus
 
 
 class HumanPlayer:

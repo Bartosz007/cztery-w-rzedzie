@@ -2,7 +2,9 @@
 
 from players import computer_player
 from players import human_player
-from utils.constants import Basic, GameStatus, Style
+from utils.constants import Basic
+from utils.constants import GameStatus
+from utils.constants import Style
 
 MAX_HITS = 41
 
@@ -37,13 +39,13 @@ class GameMechanics:
         self.__canvas.create_rectangle(0, 0, self.__width, self.__height * 0.7,
                                        fill=Style.CANVAS_BACKGROUND)
 
-        rect_height = (self.__height * 0.60 / Basic.ROWS)
+        rect_height = (self.__height * 0.60 / Basic.NUM_ROWS)
         rect_width = rect_height
-        height_hole = (self.__height * 0.7 - (rect_height * Basic.ROWS)) / Basic.COLS  # 7odstępów
-        width_hole = (self.__width - (rect_height * Basic.COLS)) / (Basic.COLS + 1)  # 8 odstępów
+        height_hole = (self.__height * 0.7 - (rect_height * Basic.NUM_ROWS)) / Basic.NUM_COLUMNS  # 7odstępów
+        width_hole = (self.__width - (rect_height * Basic.NUM_COLUMNS)) / (Basic.NUM_COLUMNS + 1)  # 8 odstępów
 
-        for i in range(Basic.ROWS):
-            for j in range(Basic.COLS):
+        for i in range(Basic.NUM_ROWS):
+            for j in range(Basic.NUM_COLUMNS):
                 color = Style.DEFAULT_COIN_COLOR
                 if self.board[i][j] == -Basic.COIN:
                     color = Style.PLAYER_ONE_COLOR
